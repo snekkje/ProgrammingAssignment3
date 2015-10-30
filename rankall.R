@@ -6,15 +6,21 @@ rankall <- function(outcome, num = "best") {
   } else if (outcome == "pneumonia") {
     colName <- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
   } else stop("invalid outcome")
-  
+
   data <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
 
   s <- split(data, data$State)
-  #hospitalList <- lapply(s, function(x) x$"Hospital.Name"[!is.na()] )
-  hospitalList <- lapply(s, function(x) x$"Hospital.Name"[num] )
-  #remove hospitals that do not have data for required oucome
-  
-  data.frame(hospital = unlist(hospitalList), state = names(hospitalList))
-  
-  
+  hospitalList <- lapply(s, function(x) x$"Hospital.Name"[order(as.numeric(x[[colName]]),
+                                                x$"Hospital.Name", na.last = NA)] )
+
+  if (num == "best") {
+    hospitalList <- lapply(hospitalList, function(x) x[1])
+  }else if (num == "worst") {
+    hospitalList <- lapply(hospitalList, function(x) x[length(hospitalList[x])])
+  }else {
+    hospitalList <- lapply(hospitalList, function(x) x[num])
+  }
+
+  str(data.frame(hospital = unlist(hospitalList), state = names(hospitalList)))
+
 }
