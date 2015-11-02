@@ -21,6 +21,6 @@ rankall <- function(outcome, num = "best") {
     hospitalList <- lapply(hospitalList, function(x) x[num])
   }
 
-  str(data.frame(hospital = unlist(hospitalList), state = names(hospitalList)))
+  data.frame(hospital = unlist(hospitalList), state = names(hospitalList))
 
 }
